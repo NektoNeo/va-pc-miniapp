@@ -1,0 +1,557 @@
+/**
+ * Modern 2025 Design System
+ * Тренды: Glassmorphism, Gradient Accents, Colorful Shadows, Micro-animations
+ */
+
+/* ========================================
+   ГРАДИЕНТЫ 2025
+   ======================================== */
+
+@layer utilities {
+  /* Primary Gradients - Яркие акценты */
+  .gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+
+  .gradient-success {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  }
+
+  .gradient-warning {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  }
+
+  .gradient-info {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  }
+
+  /* Mesh Gradients - Сложные многослойные */
+  .gradient-mesh-purple {
+    background:
+      radial-gradient(at 40% 20%, hsla(271,82%,61%,1) 0px, transparent 50%),
+      radial-gradient(at 80% 0%, hsla(264,84%,56%,1) 0px, transparent 50%),
+      radial-gradient(at 0% 50%, hsla(248,85%,66%,1) 0px, transparent 50%),
+      radial-gradient(at 80% 50%, hsla(261,76%,71%,1) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, hsla(264,81%,58%,1) 0px, transparent 50%),
+      radial-gradient(at 80% 100%, hsla(254,84%,65%,1) 0px, transparent 50%);
+  }
+
+  .gradient-mesh-cyan {
+    background:
+      radial-gradient(at 0% 0%, hsla(189,100%,56%,1) 0px, transparent 50%),
+      radial-gradient(at 50% 0%, hsla(355,100%,93%,1) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, hsla(340,100%,76%,1) 0px, transparent 50%);
+  }
+
+  /* ========================================
+     GLASSMORPHISM 2.0 - Mobile Optimized
+     ======================================== */
+
+  .glass {
+    /* Use Telegram theme colors for native feel */
+    background: color-mix(in srgb, var(--tg-secondary-bg) 30%, transparent);
+    /* Reduced blur for mobile GPU performance: 12px instead of 20px */
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid color-mix(in srgb, var(--tg-text-color) 10%, transparent);
+  }
+
+  /* Fallback for browsers without backdrop-filter support (older Android) */
+  @supports not (backdrop-filter: blur(12px)) {
+    .glass {
+      background: color-mix(in srgb, var(--tg-secondary-bg) 85%, transparent);
+    }
+    .glass-dark {
+      background: color-mix(in srgb, var(--tg-bg-color) 95%, transparent);
+    }
+    .glass-light {
+      background: color-mix(in srgb, var(--tg-text-color) 25%, transparent);
+    }
+    .card-glass {
+      background: color-mix(in srgb, var(--tg-secondary-bg) 85%, transparent);
+    }
+    .btn-glass {
+      background: color-mix(in srgb, var(--tg-button-color) 10%, transparent);
+    }
+    .badge-modern {
+      background: color-mix(in srgb, var(--tg-secondary-bg) 10%, transparent);
+    }
+  }
+
+  .glass-dark {
+    background: color-mix(in srgb, var(--tg-bg-color) 70%, transparent);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid color-mix(in srgb, var(--tg-text-color) 5%, transparent);
+  }
+
+  .glass-light {
+    background: color-mix(in srgb, var(--tg-text-color) 15%, transparent);
+    /* Lighter blur for better performance */
+    backdrop-filter: blur(10px) saturate(150%);
+    -webkit-backdrop-filter: blur(10px) saturate(150%);
+    border: 1px solid color-mix(in srgb, var(--tg-text-color) 20%, transparent);
+  }
+
+  /* ========================================
+     COLORFUL SHADOWS - Цветные тени 2025
+     ======================================== */
+
+  .shadow-purple {
+    box-shadow:
+      0 10px 40px -10px rgba(102, 126, 234, 0.4),
+      0 0 0 1px rgba(255, 255, 255, 0.05);
+  }
+
+  .shadow-cyan {
+    box-shadow:
+      0 10px 40px -10px rgba(79, 172, 254, 0.4),
+      0 0 0 1px rgba(255, 255, 255, 0.05);
+  }
+
+  .shadow-green {
+    box-shadow:
+      0 10px 40px -10px rgba(56, 239, 125, 0.4),
+      0 0 0 1px rgba(255, 255, 255, 0.05);
+  }
+
+  .shadow-pink {
+    box-shadow:
+      0 10px 40px -10px rgba(245, 87, 108, 0.4),
+      0 0 0 1px rgba(255, 255, 255, 0.05);
+  }
+
+  /* Hover Shadow Lift */
+  .shadow-lift {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .shadow-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 60px -15px rgba(102, 126, 234, 0.5);
+  }
+
+  /* ========================================
+     MICRO-ANIMATIONS
+     ======================================== */
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% {
+      box-shadow: 0 0 20px rgba(102, 126, 234, 0.4);
+    }
+    50% {
+      box-shadow: 0 0 30px rgba(102, 126, 234, 0.6);
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    background-size: 1000px 100%;
+    animation: shimmer 2s infinite;
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* ========================================
+     SMOOTH TRANSITIONS
+     ======================================== */
+
+  .transition-smooth {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .transition-spring {
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* ========================================
+     BADGE MODERNIZATION
+     ======================================== */
+
+  .badge-modern {
+    background: color-mix(in srgb, var(--tg-secondary-bg) 10%, transparent);
+    /* Reduced blur for mobile performance */
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid color-mix(in srgb, var(--tg-text-color) 10%, transparent);
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    /* Faster transitions for mobile: 200ms */
+    transition: all 0.2s;
+  }
+
+  .badge-modern:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
+
+  .badge-gradient {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: white;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s;
+  }
+
+  .badge-gradient:hover {
+    transform: scale(1.05);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  }
+
+  /* ========================================
+     CARD VARIATIONS
+     ======================================== */
+
+  .card-glass {
+    background: color-mix(in srgb, var(--tg-secondary-bg) 40%, transparent);
+    /* Reduced blur for mobile performance */
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid color-mix(in srgb, var(--tg-text-color) 10%, transparent);
+    border-radius: 1rem;
+    /* Removed hardcoded padding to allow Tailwind utilities */
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    /* Faster transitions for mobile feel: 200ms instead of 300ms */
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .card-glass:hover {
+    transform: scale(1.02);
+    box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.4);
+  }
+
+  .card-bordered {
+    background: rgba(17, 24, 39, 0.5);
+    border: 1px solid rgba(107, 114, 128, 0.5);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(8px);
+  }
+
+  .card-bordered:hover {
+    border-color: rgba(157, 78, 221, 0.5);
+    box-shadow: 0 10px 40px -10px rgba(102, 126, 234, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  }
+
+  /* ========================================
+     BUTTON ENHANCEMENTS
+     ======================================== */
+
+  .btn-gradient {
+    position: relative;
+    overflow: hidden;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    color: white;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s;
+  }
+
+  .btn-gradient::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+    background: linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.3) 100%
+    );
+  }
+
+  .btn-gradient:hover {
+    transform: scale(1.05);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn-gradient:hover::before {
+    opacity: 1;
+  }
+
+  .btn-glass {
+    background: color-mix(in srgb, var(--tg-button-color) 10%, transparent);
+    /* Reduced blur for mobile performance */
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid color-mix(in srgb, var(--tg-button-color) 30%, transparent);
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-radius: 0.75rem;
+    font-weight: 500;
+    /* Faster transitions for mobile: 200ms */
+    transition: all 0.2s;
+  }
+
+  .btn-glass:hover {
+    background: color-mix(in srgb, var(--tg-button-color) 20%, transparent);
+    transform: scale(1.05);
+  }
+
+  /* ========================================
+     NEOMORPHISM ELEMENTS
+     ======================================== */
+
+  .neo-inset {
+    background: linear-gradient(145deg, #1a1f2e, #141824);
+    box-shadow:
+      inset 5px 5px 10px #0d0f16,
+      inset -5px -5px 10px #1f2436;
+  }
+
+  .neo-raised {
+    background: linear-gradient(145deg, #1f2436, #1a1f2e);
+    box-shadow:
+      8px 8px 16px #0d0f16,
+      -8px -8px 16px #232938;
+  }
+
+  /* ========================================
+     TABLE ENHANCEMENTS
+     ======================================== */
+
+  .table-modern thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+
+  .table-modern tr {
+    transition: all 200ms;
+  }
+
+  .table-modern tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+
+  .table-modern tbody tr {
+    border-bottom: 1px solid rgba(55, 65, 81, 0.3);
+  }
+
+  /* ========================================
+     SCROLL ANIMATIONS
+     ======================================== */
+
+  .scroll-animate {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+
+  .scroll-animate.in-view {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ========================================
+     SKELETON LOADER
+     ======================================== */
+
+  .skeleton {
+    background: linear-gradient(90deg, #1f2937 0%, #374151 50%, #1f2937 100%);
+    background-size: 200% 100%;
+    border-radius: 0.5rem;
+    animation: shimmer 2s infinite;
+  }
+
+  /* ========================================
+     FLOATING LABELS
+     ======================================== */
+
+  .floating-label {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    font-size: 0.875rem;
+    pointer-events: none;
+    transition: all 0.2s;
+  }
+
+  .floating-input:focus ~ .floating-label,
+  .floating-input:not(:placeholder-shown) ~ .floating-label {
+    top: -0.5rem;
+    left: 0.75rem;
+    font-size: 0.75rem;
+    background: #111827;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    color: #c084fc;
+  }
+
+  /* ========================================
+     ACCESSIBILITY - Reduced Motion
+     ======================================== */
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Disable all animations for users with motion sensitivity */
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+
+    /* Disable specific animations */
+    .animate-fade-in-up,
+    .animate-scale-in,
+    .animate-shimmer,
+    .animate-pulse-glow {
+      animation: none;
+    }
+
+    /* Disable transforms */
+    .shadow-lift:hover,
+    .card-glass:hover,
+    .btn-gradient:hover,
+    .btn-glass:hover,
+    .badge-modern:hover,
+    .badge-gradient:hover {
+      transform: none;
+    }
+  }
+
+  /* ========================================
+     MOBILE OPTIMIZATION - Active States
+     ======================================== */
+
+  /* Replace hover states with active states for mobile */
+  @media (hover: none) and (pointer: coarse) {
+    /* Card taps */
+    .card-glass:active {
+      transform: scale(0.98);
+      box-shadow: 0 15px 40px -15px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Button taps - faster feedback (200ms) */
+    .btn-gradient:active,
+    .btn-glass:active {
+      transform: scale(0.95);
+      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Badge taps */
+    .badge-modern:active,
+    .badge-gradient:active {
+      transform: scale(0.95);
+    }
+
+    /* Shadow lift on tap instead of hover */
+    .shadow-lift:active {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 40px -10px rgba(102, 126, 234, 0.4);
+    }
+
+    /* Disable hover states on mobile */
+    .card-glass:hover,
+    .btn-gradient:hover,
+    .btn-glass:hover,
+    .badge-modern:hover,
+    .badge-gradient:hover,
+    .shadow-lift:hover {
+      transform: none;
+    }
+  }
+
+  /* ========================================
+     MOBILE PERFORMANCE - Reduced Blur
+     ======================================== */
+
+  @media (max-width: 768px) {
+    /* Further reduce blur on small screens for better GPU performance */
+    .card-glass {
+      backdrop-filter: blur(10px) saturate(160%);
+      -webkit-backdrop-filter: blur(10px) saturate(160%);
+    }
+
+    .glass,
+    .glass-dark {
+      backdrop-filter: blur(8px) saturate(160%);
+      -webkit-backdrop-filter: blur(8px) saturate(160%);
+    }
+
+    .badge-modern {
+      backdrop-filter: blur(8px) saturate(160%);
+      -webkit-backdrop-filter: blur(8px) saturate(160%);
+    }
+
+    /* Faster transitions for snappier feel on mobile (iOS-like) */
+    .transition-smooth {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .card-glass,
+    .shadow-lift {
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                  box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  }
+}

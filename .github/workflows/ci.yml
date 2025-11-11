@@ -1,0 +1,15 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 9 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: 'pnpm' }
+      - run: pnpm i --frozen-lockfile
+      - run: pnpm -w lint && pnpm -w typecheck && pnpm -w test
+      - run: pnpm -w playwright install --with-deps
+      - run: pnpm -w test:e2e

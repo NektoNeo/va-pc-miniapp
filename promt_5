@@ -1,0 +1,9 @@
+{
+    "title": "04_security_initdata_guard",
+    "model": "Claude Code Sonnet 4.5",
+    "prompt": "You are a security-focused backend engineer. Implement robust server-side validation of Telegram `initData` (HMAC-SHA256 with bot token) and protect API routes.\\n\\nTASKS:\\n- A small module to verify `initData` and extract `user_id` safely.\\n- Gate `/api/pcs*` and `/api/devices` behind this validator (or dev bypass).\\n- Unit tests.\\n\\nRULES: Sequential Thinking → PLAN/TODO; **context7** for official WebApp validation; exact TS code; no screenshots.",
+    "notes": "Keep code concise and copy-pastable."
+  }
+
+  продолжаем работу над приложением. правила: СДЕЛАЛ ВСЕ ЗАДАЧИ ИЗ ПРОМТА - ПРОВЕРИЛ ИХ - КРАТКО ВЫВЕЛ ЧТО И КАК ВЫПОЛНЕНО,
+  КАКИЕ КРИТЕРИИ УСПЕХА - И ЖДЕШЬ МОЕГО ОДОБРЕНИЯ И ПРОВЕРКИ 

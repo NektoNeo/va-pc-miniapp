@@ -1,0 +1,6 @@
+{
+    "title": "02_brand_tokens_shadcn_theme_va-pc",
+    "model": "Claude Code Sonnet 4.5",
+    "prompt": "You are a UI systems engineer. Implement **VA‑PC** dark violet neon theme for shadcn/ui using Tailwind v4 CSS variables. **No yellow** anywhere.\\n\\nRULES:\\n- **Sequential Thinking** → PLAN/TODO first.\\n- Use **context7** for Tailwind v4 + shadcn manual theming and Radix data-state patterns.\\n- Provide: tailwind.config, app/globals.css (CSS vars), components.json for shadcn, helper to map Telegram `themeParams` → CSS vars, and 2–3 example components (Button/Card/Badge) with our tokens and glass + glow effects.\\n- Accessibility contrast ≥ 4.5 for text.\\n- No images / screenshots.",
+    "notes": "Deliver exact code; keep palette: graphite + electric violet."
+  }

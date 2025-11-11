@@ -1,0 +1,350 @@
+// Prisma Schema for VA-PC Telegram Mini App
+// PostgreSQL database with production-ready design
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// ENUMS
+// ============================================================================
+
+enum Resolution {
+  FHD // 1920x1080
+  QHD // 2560x1440 (2K)
+  UHD4K // 3840x2160 (4K)
+}
+
+enum Availability {
+  IN_STOCK
+  PREORDER
+  OUT_OF_STOCK
+}
+
+enum ImageFormat {
+  WEBP
+  AVIF
+  JPEG
+  PNG
+}
+
+enum EntityType {
+  PC
+  DEVICE
+}
+
+enum CategoryKind {
+  PC
+  DEVICE
+}
+
+enum AdminRole {
+  SUPER_ADMIN // Full access to everything
+  ADMIN // Can manage products, settings, promotions
+  MODERATOR // Read-only access to leads, limited editing
+}
+
+// ============================================================================
+// MEDIA ASSETS
+// ============================================================================
+
+model ImageAsset {
+  id       String      @id @default(cuid())
+  bucket   String // S3/CloudFlare bucket name
+  key      String // Base object key (without size/format suffix): "slug__cover"
+  mime     String // Original MIME type
+  width    Int? // Original width
+  height   Int? // Original height
+  bytes    Int? // Original file size in bytes
+  format   ImageFormat @default(WEBP)
+  blurhash String? // For progressive loading
+  avgColor String? // Average color for placeholders (hex: #RRGGBB)
+  alt      String? // Accessibility description (required, max 140 chars)
+
+  // Derivatives metadata (JSON)
+  // Structure: { original: { key, width, height, sizeBytes }, sizes: [{ key, width, height, sizeBytes, format }] }
+  derivatives Json?
+
+  createdAt DateTime @default(now())
+
+  // Relations
+  pcBuildsCover   PcBuild[]       @relation("PcBuildCover")
+  pcBuildsGallery PcBuild[]       @relation("PcBuildGallery")
+  devicesCover    Device[]        @relation("DeviceCover")
+  devicesGallery  Device[]        @relation("DeviceGallery")
+  promoCampaigns  PromoCampaign[]
+
+  @@index([bucket, key])
+  @@index([createdAt])
+}
+
+model VideoAsset {
+  id          String   @id @default(cuid())
+  bucket      String
+  key         String
+  mime        String
+  width       Int?
+  height      Int?
+  durationSec Int? // Duration in seconds
+  bytes       Int?
+  createdAt   DateTime @default(now())
+
+  // Relations
+  pcBuilds PcBuild[]
+
+  @@index([bucket, key])
+  @@index([createdAt])
+}
+
+// ============================================================================
+// CATEGORIES
+// ============================================================================
+
+model Category {
+  id       String       @id @default(cuid())
+  kind     CategoryKind // PC or DEVICE
+  title    String
+  parentId String? // For hierarchical categories
+
+  // Self-reference for hierarchy
+  parent   Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
+  children Category[] @relation("CategoryHierarchy")
+
+  // Relations
+  devices Device[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([kind])
+  @@index([parentId])
+}
+
+// ============================================================================
+// PC BUILDS
+// ============================================================================
+
+model PcBuild {
+  id       String  @id @default(cuid())
+  slug     String  @unique // kebab-case URL-friendly identifier
+  title    String
+  subtitle String?
+
+  // Media
+  coverImageId String
+  coverImage   ImageAsset   @relation("PcBuildCover", fields: [coverImageId], references: [id], onDelete: Restrict)
+  gallery      ImageAsset[] @relation("PcBuildGallery")
+  videoId      String?
+  video        VideoAsset?  @relation(fields: [videoId], references: [id], onDelete: SetNull)
+
+  // Pricing
+  priceBase Int // Base price in RUB (kopecks for precision if needed, or rubles as int)
+
+  // Performance targets
+  targets Resolution[] // [FHD, QHD, UHD4K]
+
+  // Hardware specification (JSON for flexibility)
+  // Example: { cpu: "AMD Ryzen 5 7500F", gpu: "RTX 4070 Super", ram: "32GB", ssd: "1TB", psu: "750W", case: "NZXT H510" }
+  spec Json
+
+  // Configurable options (JSON)
+  // Example: { ram: [{label: "16GB DDR5", sizeGb: 16, delta: 0}, {label: "32GB DDR5", sizeGb: 32, delta: 5000}], ssd: [{label: "512GB NVMe", sizeGb: 512, delta: 0}, {label: "1TB NVMe", sizeGb: 1024, delta: 3000}] }
+  options Json
+
+  // Marketing
+  isTop        Boolean      @default(false) // Featured in Top-4
+  badges       String[] // ["New", "Sale", "Popular", etc.]
+  availability Availability @default(IN_STOCK)
+
+  // Relations
+  fpsMetrics   FpsMetric[]
+  priceHistory PriceHistory[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([slug])
+  @@index([priceBase])
+  @@index([isTop])
+  @@index([availability])
+  @@index([createdAt])
+}
+
+// ============================================================================
+// DEVICES (Peripherals, Accessories, etc.)
+// ============================================================================
+
+model Device {
+  id         String   @id @default(cuid())
+  slug       String   @unique
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  title      String
+  price      Int // Price in RUB
+
+  // Media
+  coverImageId String
+  coverImage   ImageAsset   @relation("DeviceCover", fields: [coverImageId], references: [id], onDelete: Restrict)
+  gallery      ImageAsset[] @relation("DeviceGallery")
+
+  // Marketing
+  badges String[]
+  isTop  Boolean  @default(false)
+
+  // Relations
+  priceHistory PriceHistory[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([slug])
+  @@index([categoryId])
+  @@index([price])
+  @@index([isTop])
+}
+
+// ============================================================================
+// FPS METRICS
+// ============================================================================
+
+model FpsMetric {
+  id         String     @id @default(cuid())
+  pcId       String
+  pc         PcBuild    @relation(fields: [pcId], references: [id], onDelete: Cascade)
+  game       String // Game name (e.g., "Cyberpunk 2077", "CS2")
+  resolution Resolution // FHD, QHD, UHD4K
+  fpsMin     Int? // Minimum FPS
+  fpsAvg     Int // Average FPS
+  fpsP95     Int? // 95th percentile FPS
+
+  createdAt DateTime @default(now())
+
+  @@unique([pcId, resolution, game]) // One metric per PC+resolution+game combination
+  @@index([pcId])
+  @@index([game])
+}
+
+// ============================================================================
+// PRICE HISTORY
+// ============================================================================
+
+model PriceHistory {
+  id         String     @id @default(cuid())
+  entityType EntityType // PC or DEVICE
+
+  // Separate fields for polymorphic relation (only one should be set based on entityType)
+  pcId     String?
+  deviceId String?
+
+  // Relations
+  pcBuild PcBuild? @relation(fields: [pcId], references: [id], onDelete: Cascade)
+  device  Device?  @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+
+  price      Int // Regular price in RUB
+  promoPrice Int? // Promotional price if applicable
+  startsAt   DateTime // When this price becomes active
+  endsAt     DateTime? // When this price expires (null = indefinite)
+
+  createdAt DateTime @default(now())
+
+  @@index([entityType, pcId])
+  @@index([entityType, deviceId])
+  @@index([startsAt, endsAt])
+}
+
+// ============================================================================
+// PROMO CAMPAIGNS
+// ============================================================================
+
+model PromoCampaign {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  description String?
+  active      Boolean   @default(false)
+  startsAt    DateTime
+  endsAt      DateTime? // null = no end date
+
+  bannerImageId String?
+  bannerImage   ImageAsset? @relation(fields: [bannerImageId], references: [id], onDelete: SetNull)
+
+  // Rules as JSON for flexibility
+  // Example: { type: "percentOff", value: 15, minPrice: 100000, maxPrice: 500000, tags: ["gaming-pc"] }
+  rules Json
+
+  priority Int @default(0) // Higher priority shows first
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([slug])
+  @@index([active, priority])
+  @@index([startsAt, endsAt])
+}
+
+// ============================================================================
+// GLOBAL SETTINGS (Singleton)
+// ============================================================================
+
+model Settings {
+  id String @id @default("singleton") // Only one row
+
+  // Top products configuration
+  topPcIds     String[] // Array of PcBuild IDs for Top-4
+  topDeviceIds String[] // Array of Device IDs for Top-4
+
+  // Budget presets for filters (in RUB)
+  // Example: [[46000, 100000], [100000, 150000], [150000, 225000], [225000, 300000], [300000, 500000]]
+  budgetPresets Json
+
+  // Legal documents (Telegraph links)
+  telegraph Json // { privacy: "url", offer: "url", pd_consent: "url", review_consent: "url", faq: "url" }
+
+  updatedAt DateTime @updatedAt
+}
+
+// ============================================================================
+// ADMIN USERS (Authentication & Authorization)
+// ============================================================================
+
+model AdminUser {
+  id           String    @id @default(cuid())
+  email        String    @unique // Email for login
+  passwordHash String // bcrypt hashed password
+  name         String? // Display name (optional)
+  role         AdminRole @default(ADMIN) // SUPER_ADMIN, ADMIN, or MODERATOR
+  active       Boolean   @default(true) // Can be deactivated without deletion
+
+  lastLoginAt DateTime? // Track last successful login
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([email])
+  @@index([role, active])
+}
+
+// ============================================================================
+// LEADS (Customer Inquiries)
+// ============================================================================
+
+model Lead {
+  id       String @id @default(cuid())
+  tgUserId String // Telegram user ID
+
+  // Selected items with options and calculated price
+  // Example: [{ pcId: "abc", options: { ram: 32, ssd: 1024 }, price: 150000 }]
+  items Json
+
+  phone   String? // Optional phone number
+  comment String? // Optional customer comment
+
+  createdAt DateTime @default(now())
+
+  @@index([tgUserId])
+  @@index([createdAt])
+}

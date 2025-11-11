@@ -1,0 +1,37 @@
+{
+  "name": "va-pc-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter miniapp dev",
+    "dev:bot": "pnpm --filter bot dev",
+    "build": "pnpm --recursive run build",
+    "lint": "pnpm --recursive run lint",
+    "typecheck": "pnpm --recursive run type-check",
+    "test": "pnpm --filter miniapp test",
+    "test:e2e": "pnpm --filter miniapp test:e2e"
+  },
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=8"
+  },
+  "packageManager": "pnpm@8.15.0",
+  "dependencies": {
+    "@prisma/client": "6.18.0",
+    "@radix-ui/react-accordion": "^1.2.12",
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-label": "^2.1.7",
+    "@radix-ui/react-select": "^2.2.6",
+    "@radix-ui/react-separator": "^1.1.7",
+    "@radix-ui/react-slot": "^1.2.3",
+    "@radix-ui/react-switch": "^1.2.6",
+    "@radix-ui/react-tabs": "^1.1.13",
+    "lucide-react": "^0.552.0",
+    "react-hook-form": "^7.66.0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^3.0.0",
+    "bcryptjs": "^3.0.2",
+    "prisma": "6.18.0"
+  }
+}

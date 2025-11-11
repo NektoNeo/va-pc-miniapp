@@ -1,0 +1,108 @@
+Продолжаем работу над проектом.
+  Ниже - краткий контекст для понимания проекта.
+
+{
+  "project": {
+    "name": "VA-PC Telegram Mini App",
+    "mission": "Мини‑приложение в Telegram для продажи игровых ПК и девайсов с фирменной фиолетовой стилем VA‑PC, быстрым каталогом и конверсионной карточкой сборки."
+  },
+  "brand": {
+    "palette": {
+      "neutrals": { "background": "#0A0B0D", "card": "#13111A", "border": "#2A2633", "foreground": "#F6F6F6" },
+      "primaryViolet": ["#9F5BFF", "#8B3FFF", "#6F2BE5"],
+      "rules": ["NO_YELLOW", "glass surfaces + subtle glow", "radius=12px", "text contrast >= 4.5"]
+    },
+    "tone": "темный графит + электрический фиолетовый, стекло и мягкое свечение"
+  },
+  "ia_routes": [
+    { "path": "/", "desc": "Главная: 2 плитки (Игровые ПК/Девайсы) + Top‑4 ПК" },
+    { "path": "/pcs", "desc": "Все сборки + пресеты бюджета [none, 46–100k, 100–150k, 150–225k, 225–300k, 300–500k] + бейджи FHD/2K/4K" },
+    { "path": "/pcs/[slug]", "desc": "Карточка: галерея (+опц. видео), характеристики, конфигуратор RAM/SSD с наценками, MainButton CTA" },
+    { "path": "/devices", "desc": "Категории + Top‑4 девайса" },
+    { "path": "/docs", "desc": "Telegraph: политика ПДн, оферта, согласия, FAQ/доставка/гарантия" },
+    { "path": "/contacts", "desc": "Связь/каналы/поддержка" }
+  ],
+  "tma_requirements": {
+    "legal_and_comms": {
+      "telegraph_docs": ["privacy", "offer", "pd_consent", "review_consent"],
+      "channels": ["builds", "news"],
+      "auto_reminders_days": [3, 7]
+    },
+    "webapp_api": ["BackButton", "MainButton", "themeParams->CSS vars", "safe areas", "expand()"],
+    "security": "Server-side HMAC-SHA256 validation of initData (trust user_id only after verify)"
+  },
+  "stack": {
+    "frontend": "Next.js 15 + React 19 + TypeScript, Tailwind v4, shadcn/ui (Radix) — локальные компоненты",
+    "state": "TanStack Query v5 (server-state) + Zustand v5 (UI/filters/config)",
+    "backend": "Next Route Handlers + Prisma ORM + PostgreSQL; Redis + BullMQ для напоминалок",
+    "bot": "Telegraf v4 (webhook), команды: /start /help /catalog /channels /stop_reminders",
+    "observability": "Sentry for Next.js (errors, performance, Session Replay) + MCP Sentry для Claude Code"
+  },
+  "repo": {
+    "layout": "monorepo (pnpm)",
+    "packages": ["apps/miniapp", "apps/bot", "packages/ui", "packages/shared", "packages/config"]
+  },
+  "env_keys": [
+    "BOT_TOKEN", "WEBHOOK_SECRET", "DATABASE_URL", "REDIS_URL",
+    "NEXT_PUBLIC_TG_PRIVACY", "NEXT_PUBLIC_TG_OFFER", "NEXT_PUBLIC_TG_PD_CONSENT", "NEXT_PUBLIC_TG_REVIEW_CONSENT", "NEXT_PUBLIC_TG_FAQ",
+    "VAPC_CHANNEL_BUILDS", "VAPC_CHANNEL_NEWS",
+    "NEXT_PUBLIC_SENTRY_DSN", "SENTRY_ORG", "SENTRY_PROJECT", "SENTRY_AUTH_TOKEN"
+  ],
+  "api_contracts": [
+    "GET /api/pcs?priceRange=46-100&res=fhd|2k|4k",
+    "GET /api/pcs/[slug]",
+    "GET /api/devices",
+    "POST /api/interaction/seen",
+    "POST /api/telegram/webhook"
+  ],
+  "db_outline": {
+    "PcBuild": "slug,title,priceBase,targets[FHD/QHD/UHD4K],spec(json),options{ram[],ssd[]},isTop,badges[],gallery[],availability",
+    "Device": "slug,category,title,price,gallery[],isTop",
+    "FpsMetric": "pcId,game,resolution,fpsAvg(+min/p95)",
+    "PromoCampaign": "title,active,period,priority,rules(json)",
+    "PriceHistory": "entityType,entityId,price,promoPrice?,period",
+    "ImageAsset/VideoAsset": "метаданные для деривативов",
+    "Settings": "topPcIds/topDeviceIds, budgetPresets, telegraph links",
+    "Lead": "tgUserId, items(pcId/options/price), phone?, comment?"
+  },
+  "admin_panel": {
+    "sections": ["PC Builds", "Devices", "Categories", "Promotions", "FPS", "Settings (Top‑4, budgets, Telegraph)", "Media", "Leads (RO)"],
+    "forms": "React Hook Form + Zod; DataTable (TanStack) с сортировкой/поиском; drag&drop gallery; Preview in Mini App"
+  },
+  "media_requirements": {
+    "images": { "accept": ["JPEG","PNG","WEBP","AVIF"], "maxMB": 10, "derivatives": [320,640,1280,2048], "color": "sRGB", "altRequired": true, "lqip": "blurhash+avgColor" },
+    "video": { "accept": ["MP4(H.264)","WebM(VP9)"], "maxMB": 100, "poster": "auto" },
+    "naming": "${slug}__${kind}__${w}x${h}.${ext}"
+  },
+  "testing_perf_rules": {
+    "unit": "Vitest + RTL для фильтров/конфигуратора/валидатора initData",
+    "e2e": "Playwright: только section/component screenshots (никаких full‑page)",
+    "perf_budget": { "LCP_ms": 1800, "bundle_main_kb_gz": 150 }
+  },
+  "work_method": {
+    "sequential_thinking": "Всегда: интерпретация → допущения → детальный план → TODO → код",
+    "context7": "Тянуть актуальные доки по Next15/React19/Tailwind v4/shadcn/TMA/Telegraf/BullMQ/Sentry",
+    "token_policy": ["код > текст", "без полноэкранных скринов", "строгие версии и конфиги"]
+  },
+  "mcp_sentry": {
+    "client_config_snippet": { "mcpServers": { "sentry": { "url": "https://mcp.sentry.dev/mcp" } } },
+    "usage": ["Перед фиксом — спроси MCP Sentry: последние ошибки, топ транзакций, незакрытые issues"]
+  },
+  "acceptance_focus": [
+    "Docs в /docs (Telegraph) и в боте", 
+    "Каталог со ВСЕМИ сборками + бюджет‑пресеты", 
+    "Карточка: корректный пересчет RAM/SSD + MainButton", 
+    "Напоминалки +3/+7 с /stop_reminders", 
+    "Бренд: фиолетовый, стекло, никакого жёлтого"
+  ]
+}
+
+   А теперь JSON промт для тебя. Выполняешь задачи - кратко показываешь мне что выполнено из промта, что не выполнено (что тебе
+  осталось), ждешь моего одобрения и дальнейшей команды.
+
+  {
+  "title": "03_admin_ui_panel_va-pc",
+  "model": "Claude Code Sonnet 4.5",
+  "prompt": "You are a full‑stack product engineer. Build a secure **Admin Panel** to manage the VA‑PC database.\\n\\nMETHOD:\\n- **Sequential Thinking**: interpret → PLAN → TODO → code.\\n- **context7** for Next.js App Router, shadcn/ui (manual), React Hook Form + Zod, TanStack Table, Prisma CRUD.\\n\\nBRAND THEME:\\n- VA‑PC dark graphite + electric violet neon; radius 12px; glass cards; **no yellow**. Use our existing tokens.\\n\\nSCOPE (MVP Admin):\\n1) **Auth**: simple password/Telegram login for now (server-only env whitelist) + Sentry user tagging.\\n2) **Sections**:\\n   - **PC Builds**: list (DataTable with search/sort by price/title/availability), create/edit form (title, slug, subtitle?, priceBase, availability, spec JSON editor with safe schema, options editor for RAM/SSD, badges, targets [FHD/QHD/UHD4K], gallery/cover uploader, Top‑4 toggle).\\n   - **Devices**: CRUD (category select, price, gallery).\\n   - **Categories**: CRUD with kind [PC, DEVICE].\\n   - **Promotions**: CRUD (title, active, dates, rules JSON, banner upload, priority); preview which items affected now.\\n   - **FPS Metrics**: attach games to a PC (game name + resolution + fpsAvg [+ optional min/p95]).\\n   - **Settings**: Top‑4 lists reorder (drag‑and‑drop), budget presets matrix, Telegraph links (privacy/offer/pd_consent/review_consent/faq).\\n   - **Media**: library with filters and re‑use (connect to items).\\n   - **Leads (read‑only)**: table for incoming leads from the mini‑app.\\n3) **Forms**: React Hook Form + Zod; inline errors; unsaved‑changes guard; keyboard shortcuts (⌘S/CTRL+S).\\n4) **Tables**: TanStack Table v8 + server‑side pagination/sort; bulk actions (publish/unpublish/isTop).\\n5) **Routing**: /admin/login, /admin (dashboard), /admin/pcs, /admin/pcs/:id, /admin/devices, /admin/categories, /admin/promos, /admin/settings, /admin/media, /admin/leads.\\n6) **UX**: toasts on save; optimistic updates; skeletons using blurhash; drag‑and‑drop gallery ordering; `Preview in Mini App` deep‑link.\\n7) **Security**: all admin routes behind middleware; CSRF via same‑site; strict CORS deny; Prisma Zod validation on server.\\n8) **Observability**: add **Sentry** + **MCP Sentry** (how‑to block + config snippet) to admin as well; tag events with route/feature and adminId.\\n9) **Tests**: Vitest for form resolvers; Playwright **section-only** screenshots for: (a) create PC, (b) add promo, (c) reorder Top‑4.\\n\\nDELIVERABLES:\\n- Page/components code (shadcn/ui: Button, Input, Select, Switch, Dialog/Sheet, DataTable, Badge, Accordion, Tabs).\\n- `app/admin/layout.tsx` with protected layout; `middleware.ts` for /admin gate.\\n- CRUD route handlers + Prisma service modules.\\n- Example seed to populate UI (4 PCs, 4 devices, 1 promo, settings with budget presets).\\n\\nACCEPTANCE CRITERIA (CHECKLIST):\\n- Can create/edit a **PC build** with RAM/SSD options and attach gallery; computed final price works in preview.\\n- Can reorder **Top‑4 PCs** in Settings and see the order change in `/api/settings`.\\n- `Telegraph` links editable and persisted.\\n- Promo marks price as promo when active now.\\n\\nGUARDRAILS:\\n- No full-page screenshots in tests.\\n- shadcn components are local; theme tokens enforced (no yellow).",
+  "notes": "Return compilable code and a minimal README for admins."
+}

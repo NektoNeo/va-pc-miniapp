@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Browser Sentry Test</title>
+    <script src="https://browser.sentry-cdn.com/7.114.0/bundle.min.js"></script>
+</head>
+<body>
+    <h1>Browser Sentry Direct Test</h1>
+    <button onclick="sendError()">Send Error</button>
+    <div id="log"></div>
+
+    <script>
+        Sentry.init({
+            dsn: "https://157bc825c692d5ca3d5ddd7edc7abac5@o4509966327939072.ingest.de.sentry.io/4510285263929424",
+            environment: "development",
+            sampleRate: 1.0,
+            debug: true,
+            beforeSend(event, hint) {
+                console.log("🔴 Browser beforeSend:", event);
+                return event;
+            }
+        });
+
+        function sendError() {
+            const log = document.getElementById('log');
+            log.innerHTML += '<p>Отправка ошибки...</p>';
+
+            try {
+                throw new Error("Browser Direct Test Error");
+            } catch (e) {
+                const eventId = Sentry.captureException(e, {
+                    level: 'error',
+                    tags: {
+                        test: 'browser-direct',
+                        source: 'html-page'
+                    }
+                });
+                log.innerHTML += `<p>✅ Отправлено! Event ID: ${eventId}</p>`;
+                console.log("Event ID:", eventId);
+            }
+        }
+    </script>
+</body>
+</html>

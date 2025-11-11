@@ -1,0 +1,6 @@
+{
+    "title": "07_quality_perf_playwright",
+    "model": "Claude Code Sonnet 4.5",
+    "prompt": "You are a QA/performance engineer. Add Playwright E2E for critical flows and strict perf budgets.\\n\\nTASKS:\\n- Playwright tests: Home tiles, /pcs budget filter, /pcs/[slug] configurator. **Take only section/component screenshots**, forbid full-page shots.\\n- Vitest + RTL for filters/configurator.\\n- Perf budgets (bundlesize checks), route-level code splitting, image optimization, React memoization where needed.\\n\\nRULES: Sequential Thinking; **context7** for Playwright best practices; focus tokens on code/config; strictly no full-page screenshots.",
+    "notes": "Deliver runnable configs and sample tests."
+  }

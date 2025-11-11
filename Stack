@@ -1,0 +1,8 @@
+Next.js 15 + React 19 (App Router) — стабильный, с RSC и Turbopack; официальный релиз 15‑й версии и поддержка React 19 подтверждены.  ￼
+	•	Tailwind CSS v4 (или v4.1) + shadcn/ui (Radix под капотом) — кастомные токены через CSS‑переменные, лёгкая темизация.  ￼
+	•	Telegram WebApp API через @twa-dev/sdk (или @tma.js/*) — BackButton/MainButton, themeParams, safe‑areas, expand(), initData и пр. (официальная дока + typed‑обёртки).  ￼
+	•	TanStack Query v5 — серверный стейт (fetch/cache).  ￼
+	•	Zustand v5 — локальный UI‑стейт (фильтры, конфиг).  ￼
+	•	Бот: Telegraf v4 (TypeScript) на webhook.  ￼
+	•	Рассылки/напоминалки: BullMQ (delay + repeatable jobs) поверх Redis.  ￼
+	•	Обсервабилити: Sentry for Next.js (ошибки, перф, Session Replay) + MCP Sentry (для Claude Code).  

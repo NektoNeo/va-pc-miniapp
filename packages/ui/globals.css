@@ -1,0 +1,204 @@
+@import "tailwindcss";
+@import "./styles/modern-2025.css";
+
+/**
+ * VA-PC Dark Violet Neon Theme
+ * OKLCH colors, Glass + Glow effects, WCAG AA compliant
+ */
+
+@layer base {
+  /* ============================================
+     BASE THEME VARIABLES (OKLCH Format)
+     ============================================ */
+
+  :root {
+    --background: oklch(0.08 0.015 270);
+    --foreground: oklch(0.95 0.008 270);
+    --card: oklch(0.12 0.018 270);
+    --card-foreground: oklch(0.95 0.008 270);
+    --popover: oklch(0.12 0.018 270);
+    --popover-foreground: oklch(0.95 0.008 270);
+    --primary: oklch(0.55 0.24 290);
+    --primary-foreground: oklch(0.98 0.005 270);
+    --secondary: oklch(0.18 0.02 270);
+    --secondary-foreground: oklch(0.95 0.008 270);
+    --muted: oklch(0.22 0.02 270);
+    --muted-foreground: oklch(0.65 0.015 270);
+    --accent: oklch(0.70 0.18 290);
+    --accent-foreground: oklch(0.98 0.005 270);
+    --destructive: oklch(0.58 0.22 15);
+    --destructive-foreground: oklch(0.98 0.005 270);
+    --border: oklch(0.25 0.02 270);
+    --input: oklch(0.28 0.025 270);
+    --ring: oklch(0.60 0.22 290);
+    --radius: 0.75rem; /* 12px по бренд-гайду VA-PC */
+
+    /* Glass & Glow */
+    --glass-bg: oklch(0.15 0.02 270 / 0.3);
+    --glass-border: oklch(0.4 0.05 290 / 0.2);
+    --glow-primary: oklch(0.55 0.24 290);
+    --glow-accent: oklch(0.70 0.18 290);
+    --glow-intensity: 0.8;
+
+    /* Safe Area Insets (iPhone notch, rounded corners) */
+    --safe-area-top: env(safe-area-inset-top, 0px);
+    --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-area-left: env(safe-area-inset-left, 0px);
+    --safe-area-right: env(safe-area-inset-right, 0px);
+
+    /* Telegram theme colors (will be set dynamically) */
+    --tg-bg-color: var(--background);
+    --tg-text-color: var(--foreground);
+    --tg-hint-color: var(--muted-foreground);
+    --tg-link-color: var(--primary);
+    --tg-button-color: var(--primary);
+    --tg-button-text-color: var(--primary-foreground);
+    --tg-secondary-bg: var(--card);
+  }
+
+  /* ============================================
+     TAILWIND V4 @theme DIRECTIVE
+     ============================================ */
+
+  @theme {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: var(--radius);
+    --radius-lg: calc(var(--radius) + 4px);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+
+    /* Safe area padding for iPhone notch and rounded corners */
+    padding-top: max(var(--safe-area-top), 8px);
+    padding-bottom: max(var(--safe-area-bottom), 8px);
+    padding-left: var(--safe-area-left);
+    padding-right: var(--safe-area-right);
+  }
+
+  /* ============================================
+     GLASS MORPHISM - Using theme variables
+     ============================================ */
+
+  .glass-strong {
+    background: oklch(from var(--glass-bg) l c h / 0.6);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  /* ============================================
+     NEON GLOW - Using theme variables
+     ============================================ */
+
+  .glow-primary {
+    box-shadow:
+      0 0 8px oklch(from var(--glow-primary) l c h / calc(var(--glow-intensity) * 0.3)),
+      0 0 16px oklch(from var(--glow-primary) l c h / calc(var(--glow-intensity) * 0.2)),
+      0 0 24px oklch(from var(--glow-primary) l c h / calc(var(--glow-intensity) * 0.1));
+  }
+
+  .glow-accent {
+    box-shadow:
+      0 0 8px oklch(from var(--glow-accent) l c h / calc(var(--glow-intensity) * 0.3)),
+      0 0 16px oklch(from var(--glow-accent) l c h / calc(var(--glow-intensity) * 0.2)),
+      0 0 24px oklch(from var(--glow-accent) l c h / calc(var(--glow-intensity) * 0.1));
+  }
+
+  .glow-hover {
+    transition: box-shadow 0.3s ease;
+  }
+
+  .glow-hover:hover {
+    box-shadow:
+      0 0 12px oklch(from var(--glow-primary) l c h / calc(var(--glow-intensity) * 0.4)),
+      0 0 24px oklch(from var(--glow-primary) l c h / calc(var(--glow-intensity) * 0.3)),
+      0 0 36px oklch(from var(--glow-primary) l c h / calc(var(--glow-intensity) * 0.2));
+  }
+
+  /* ============================================
+     RADIX UI DATA-STATE PATTERNS
+     ============================================ */
+
+  [data-state="open"],
+  [data-state="checked"] {
+    @apply bg-accent text-accent-foreground;
+  }
+
+  [data-disabled] {
+    @apply pointer-events-none opacity-50;
+  }
+
+  [data-selected] {
+    @apply bg-primary text-primary-foreground;
+  }
+}
+
+@layer utilities {
+  .text-glow {
+    text-shadow:
+      0 0 8px oklch(from var(--glow-accent) l c h / 0.4),
+      0 0 16px oklch(from var(--glow-accent) l c h / 0.2);
+  }
+
+  @keyframes glow-pulse {
+    0%, 100% {
+      opacity: 1;
+      filter: brightness(1);
+    }
+    50% {
+      opacity: 0.85;
+      filter: brightness(1.2);
+    }
+  }
+
+  .glow-pulse {
+    animation: glow-pulse 2s ease-in-out infinite;
+  }
+
+  .border-gradient {
+    position: relative;
+  }
+
+  .border-gradient::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg,
+      oklch(from var(--primary) l c h / 0.5),
+      oklch(from var(--accent) l c h / 0.5)
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+}

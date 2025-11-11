@@ -1,0 +1,11 @@
+{
+    "title": "06_observability_sentry_and_mcp",
+    "model": "Claude Code Sonnet 4.5",
+    "prompt": "You are a DX/observability engineer. Add Sentry to the Next.js app and wire up **MCP Sentry** for Claude Code.\\n\\nTASKS:\\n- Install/configure `@sentry/nextjs` via wizard; set DSN, environment, releases. Enable Performance and **Session Replay** with privacy options.\\n- Add example custom tags (user_id from verified initData), attach route/feature tags (home, pcs, product, filters, configurator).\\n- Provide a snippet of MCP client config for Claude Code to connect to Sentry's remote MCP server (OAuth), and a short how-to for querying open issues before starting to fix code.\\n\\nRULES: **Sequential Thinking**; **context7** for Sentry Next.js docs, Replay config, and Sentry MCP docs; code > prose; no full-page screenshots.",
+    "notes": "This task ensures Claude Code can use MCP Sentry during development."
+  }
+
+  продолжаем работу над приложением. правила: СДЕЛАЛ ВСЕ ЗАДАЧИ ИЗ ПРОМТА - ПРОВЕРИЛ ИХ - КРАТКО ВЫВЕЛ ЧТО И КАК ВЫПОЛНЕНО,
+  КАКИЕ КРИТЕРИИ УСПЕХА - И ЖДЕШЬ МОЕГО ОДОБРЕНИЯ И ПРОВЕРКИ. Единственное, дам подсказку, что мы стобой еще В НАЧАЛЕ УЖЕ настраивали sentry. Поэтому после получения промта - выпиши список задач И ПРОВЕРЬ СРАЗУ, что УЖЕ выполнено, а что ТРЕБУЕТ ДОРАБОТКИ. (можешь прям тестами сделать, ибо когда мы тестили в последний раз - все работало)
+
+  

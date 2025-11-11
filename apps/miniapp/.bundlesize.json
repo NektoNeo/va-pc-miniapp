@@ -1,0 +1,14 @@
+{
+  "files": [
+    {
+      "path": ".next/static/chunks/**/*.js",
+      "maxSize": "200kb",
+      "compression": "gzip"
+    },
+    {
+      "path": ".next/static/css/**/*.css",
+      "maxSize": "50kb",
+      "compression": "gzip"
+    }
+  ]
+}

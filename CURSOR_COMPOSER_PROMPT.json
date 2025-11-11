@@ -1,0 +1,341 @@
+{
+  "⚠️ КРИТИЧЕСКОЕ_ПРЕДУПРЕЖДЕНИЕ": {
+    "ГЛАВНОЕ_ПРАВИЛО": "НЕ ПЕРЕПИСЫВАТЬ ПРОЕКТ С НУЛЯ! НЕ ТРОГАТЬ TELEGRAM BOT! РАБОТАЕМ ТОЛЬКО НАД АДМИНКОЙ!",
+    "ФОКУС": "Исправить 1 КОНКРЕТНЫЙ failing E2E тест - 'should fill and submit PC build form'",
+    "ТЕКУЩИЙ_СТАТУС": "17/18 тестов проходят (94%), нужно добиться 18/18 (100%)"
+  },
+
+  "ЗАДАЧА": {
+    "title": "Исправить E2E тест создания PC Build в админке",
+    "проблема": "Форма не отправляется - остается на /admin/pcs/new вместо редиректа на /admin/pcs",
+    "ожидаемое_поведение": "После submit → редирект на /admin/pcs со списком сборок",
+    "фактическое_поведение": "URL остается http://localhost:3002/admin/pcs/new, форма не сохраняется",
+    "ошибка_теста": "expect(page).toHaveURL(/\\/admin\\/pcs$/) failed - received http://localhost:3002/admin/pcs/new",
+    "проект_путь": "/Users/serjnavigatian/Projects/tg-final/apps/miniapp",
+    "порт": 3002,
+    "last_commit": "d4df5f3 - feat(ui): Add alert-dialog and tooltip shadcn components"
+  },
+
+  "ТЕХНОЛОГИЧЕСКИЙ_СТЕК": {
+    "framework": "Next.js 15.1 (App Router)",
+    "форма": "React Hook Form v7.x с mode: 'onBlur'",
+    "валидация": "Zod v3.x schemas",
+    "ui_library": "Radix UI (Tabs, Select, Switch и др.)",
+    "тестирование": "Playwright E2E",
+    "база_данных": "PostgreSQL + Prisma ORM",
+    "язык": "TypeScript 5.x",
+    "styling": "Tailwind CSS"
+  },
+
+  "КРИТИЧЕСКИЕ_ФАЙЛЫ_ДЛЯ_АНАЛИЗА": {
+    "1_форма": {
+      "путь": "/apps/miniapp/components/admin/pc-builds/pc-build-form.tsx",
+      "описание": "Компонент формы с 4 табами (Основное, Медиа, Характеристики, Опции)",
+      "проблема": "Submit button не срабатывает - форма не отправляется",
+      "технологии": [
+        "React Hook Form (useForm с mode: 'onBlur')",
+        "Radix UI Tabs (4 TabsContent без forceMount)",
+        "FormField компоненты из shadcn/ui",
+        "Zod resolver для валидации"
+      ],
+      "структура_табов": {
+        "tab_1_основное": "title, slug, subtitle, priceBase, availability, targets (checkboxes), isTop (switch)",
+        "tab_2_медиа": "TODO - Media Library (mock data для coverImageId, videoId, gallery)",
+        "tab_3_характеристики": "cpu*, gpu*, ram*, ssd*, motherboard, psu, cooling, case (* = required)",
+        "tab_4_опции": "ramOptions, ssdOptions, gpuOptions, coolingOptions (arrays с FormFieldArray)"
+      },
+      "важно": "Проблема может быть в том, что spec fields (cpu, gpu, ram, ssd) не регистрируются в React Hook Form или не валидируются правильно"
+    },
+    "2_валидация": {
+      "путь": "/apps/miniapp/lib/validations/pc-builds.ts",
+      "описание": "Zod schemas для PC Build формы",
+      "ТЕКУЩЕЕ_СОСТОЯНИЕ": {
+        "coverImageId": "OPTIONAL (было required, сделали .optional() - НЕ ПОМОГЛО)",
+        "options": "OPTIONAL (было required, сделали .optional() - НЕ ПОМОГЛО)",
+        "spec_fields_REQUIRED": {
+          "cpu": "z.string().min(3).max(100) - REQUIRED!",
+          "gpu": "z.string().min(3).max(100) - REQUIRED!",
+          "ram": "z.string().min(3).max(100) - REQUIRED!",
+          "ssd": "z.string().min(3).max(100) - REQUIRED!"
+        }
+      },
+      "подозрение": "Возможно spec fields (cpu, gpu, ram, ssd) не проходят валидацию или не регистрируются в форме"
+    },
+    "3_тест": {
+      "путь": "/apps/miniapp/tests/e2e/admin/pc-builds.admin.spec.ts",
+      "failing_test": "should fill and submit PC build form (строка 66)",
+      "текущая_логика": [
+        "1. Переход на /admin/pcs/new",
+        "2. Клик на таб 'Основное'",
+        "3. Заполнение: slug, title, subtitle, priceBase",
+        "4. Клик на таб 'Характеристики'",
+        "5. Заполнение spec fields с blur() после каждого: cpu, gpu, ram, ssd, psu, case, cooling",
+        "6. Submit (СЕЙЧАС ОСТАЕМСЯ НА ТАБЕ 'Характеристики' - последнее изменение)",
+        "7. Ожидание редиректа на /admin/pcs - FAIL!"
+      ],
+      "важно": "Тест заполняет ВСЕ required поля, но форма НЕ отправляется"
+    },
+    "4_роут_обработчик": {
+      "путь": "/apps/miniapp/app/admin/pcs/[id]/page.tsx",
+      "описание": "Server Component для создания/редактирования PC Build",
+      "важно": "Проверить onSubmit handler в pc-build-form.tsx - возможно там проблема"
+    },
+    "5_error_context": {
+      "путь": "/apps/miniapp/test-results/.../error-context.md",
+      "важно": "Page snapshot показывает, что при submit форма находится на табе 'Основное', но spec fields ОТСУТСТВУЮТ в DOM!",
+      "проблема": "TabsContent размонтируется при переключении табов - spec fields теряются"
+    }
+  },
+
+  "ИСТОРИЯ_НЕУДАЧНЫХ_ПОПЫТОК_ИСПРАВЛЕНИЯ": {
+    "попытка_1_tab_switch_to_основное": {
+      "что_сделали": "Добавили возврат на таб 'Основное' перед submit",
+      "логика": "Переключаемся на основной таб, чтобы все поля были видимы",
+      "результат": "17/18 - НЕ ПОМОГЛО",
+      "почему_не_сработало": "Spec fields размонтировались при переключении таба"
+    },
+    "попытка_2_blur_after_each_field": {
+      "что_сделали": "Добавили await page.evaluate(() => document.activeElement?.blur()) после каждого spec field",
+      "логика": "React Hook Form использует mode: 'onBlur', поэтому триггерим blur для валидации",
+      "результат": "17/18 - НЕ ПОМОГЛО",
+      "почему_не_сработало": "Blur срабатывал, но проблема была глубже"
+    },
+    "попытка_3_options_optional": {
+      "что_сделали": "Сделали options: pcOptionsSchema.optional() в pc-builds.ts",
+      "логика": "options field был required без FormField - делаем optional",
+      "результат": "17/18 - НЕ ПОМОГЛО",
+      "почему_не_сработало": "options не был причиной проблемы"
+    },
+    "попытка_4_coverImageId_optional": {
+      "что_сделали": "Сделали coverImageId: z.string().min(1).optional() в pc-builds.ts",
+      "логика": "coverImageId был required без FormField на табе Медиа",
+      "результат": "17/18 - НЕ ПОМОГЛО",
+      "почему_не_сработало": "coverImageId не был причиной проблемы"
+    },
+    "попытка_5_forceMount_на_все_табы": {
+      "что_сделали": "Добавили forceMount prop ко всем 4 TabsContent в pc-build-form.tsx",
+      "логика": "forceMount предотвращает размонтирование TabsContent при переключении табов",
+      "результат": "16/18 - СТАЛО ХУЖЕ! Сломался еще один тест (edit form)",
+      "почему_не_сработало": "forceMount вызвал побочные эффекты при инициализации edit формы",
+      "откат": "Немедленно откатили изменения"
+    },
+    "попытка_6_убрать_tab_switch": {
+      "что_сделали": "Убрали возврат на таб 'Основное' перед submit - остаемся на 'Характеристики'",
+      "логика": "Spec fields остаются mounted на табе 'Характеристики', не размонтируются",
+      "результат": "17/18 - НЕ ПОМОГЛО!",
+      "почему_не_сработало": "Проблема НЕ в размонтировании табов!"
+    },
+    "ВЫВОД": "Проблема ГЛУБЖЕ, чем мы думали. Не связана с табами, blur, или optional fields!"
+  },
+
+  "ГИПОТЕЗЫ_О_ПРИЧИНАХ_ПРОБЛЕМЫ": {
+    "гипотеза_1_react_hook_form_не_регистрирует_все_поля": {
+      "описание": "React Hook Form не регистрирует spec fields (cpu, gpu, ram, ssd) несмотря на FormField",
+      "как_проверить": [
+        "Добавить console.log(form.formState.errors) перед submit",
+        "Проверить form.getValues() - есть ли там spec fields?",
+        "Использовать React DevTools для просмотра form state"
+      ],
+      "вероятность": "ВЫСОКАЯ - это может объяснить почему форма не отправляется"
+    },
+    "гипотеза_2_валидация_проваливается_незаметно": {
+      "описание": "Zod валидация проваливается, но ошибки не отображаются пользователю/тесту",
+      "как_проверить": [
+        "Проверить isValid в formState",
+        "Логировать результат validate() перед submit",
+        "Добавить console.log для всех Zod validation errors"
+      ],
+      "вероятность": "ВЫСОКАЯ - тест не видит toast с ошибкой"
+    },
+    "гипотеза_3_onSubmit_handler_не_вызывается": {
+      "описание": "handleSubmit не вызывает onSubmit callback из-за validation failure",
+      "как_проверить": [
+        "Добавить console.log в начало onSubmit функции",
+        "Проверить что form.handleSubmit правильно обернут вокруг onSubmit",
+        "Убедиться что button type='submit' и находится внутри <form>"
+      ],
+      "вероятность": "ОЧЕНЬ ВЫСОКАЯ - классический случай silent validation failure"
+    },
+    "гипотеза_4_API_route_проваливается": {
+      "описание": "POST /api/admin/pcs вызывается но возвращает ошибку",
+      "как_проверить": [
+        "Проверить Network tab в браузере во время теста",
+        "Добавить waitForResponse в тест для отлова API call",
+        "Логировать response.status и response.body"
+      ],
+      "вероятность": "СРЕДНЯЯ - тест уже использует waitForResponse с timeout"
+    },
+    "гипотеза_5_FormField_registration_bug": {
+      "описание": "FormField компонент из shadcn/ui не правильно регистрирует nested fields в React Hook Form",
+      "как_проверить": [
+        "Проверить что FormField использует правильный name prop",
+        "Убедиться что spec.cpu, spec.gpu (с точкой!) правильно регистрируются",
+        "Попробовать заменить FormField на обычный <input ref={register('spec.cpu')}>"
+      ],
+      "вероятность": "ОЧЕНЬ ВЫСОКАЯ - spec fields имеют nested path 'spec.cpu', 'spec.gpu' и т.д."
+    }
+  },
+
+  "ПЛАН_ДЕЙСТВИЙ_ДЛЯ_CURSOR_COMPOSER": {
+    "step_1_диагностика": {
+      "задача": "Добавить comprehensive logging в pc-build-form.tsx для диагностики",
+      "что_логировать": [
+        "form.formState.isValid перед submit",
+        "form.formState.errors (весь объект)",
+        "form.getValues() - все значения формы",
+        "Вход в onSubmit функцию (console.log('SUBMIT CALLED', data))",
+        "API response status и body"
+      ],
+      "где_добавить": "В pc-build-form.tsx в обработчике handleSubmit",
+      "цель": "Понять на каком этапе форма проваливается"
+    },
+    "step_2_проверка_registration": {
+      "задача": "Убедиться что ВСЕ spec fields регистрируются в React Hook Form",
+      "как": [
+        "Проверить что FormField для spec.cpu, spec.gpu, spec.ram, spec.ssd используют правильный name",
+        "console.log Object.keys(form.getValues()) - должны быть spec.cpu, spec.gpu, spec.ram, spec.ssd",
+        "Проверить что FormField control={form.control} передается правильно"
+      ],
+      "важно": "Nested fields 'spec.cpu' должны быть зарегистрированы с ТОЧКОЙ в пути!"
+    },
+    "step_3_упростить_валидацию": {
+      "задача": "Временно упростить Zod схему для изоляции проблемы",
+      "как": [
+        "Сделать ВСЕ spec fields optional: cpu: z.string().optional()",
+        "Запустить тест - если проходит, значит проблема в required validation",
+        "Постепенно возвращать required для каждого поля и искать culprit"
+      ],
+      "откат": "После диагностики вернуть required fields обратно"
+    },
+    "step_4_проверить_API_route": {
+      "задача": "Убедиться что POST /api/admin/pcs работает корректно",
+      "файл": "/apps/miniapp/app/api/admin/pcs/route.ts (или где находится API handler)",
+      "проверить": [
+        "Корректная обработка request body",
+        "Правильная валидация данных",
+        "Успешное сохранение в БД",
+        "Возврат корректного response (200 OK с данными или redirect)"
+      ]
+    },
+    "step_5_изучить_работающие_формы": {
+      "задача": "Сравнить с другими работающими формами в админке",
+      "примеры": [
+        "/apps/miniapp/components/admin/promos/promo-form.tsx - работает?",
+        "/apps/miniapp/components/admin/devices/device-form.tsx - работает?",
+        "/apps/miniapp/components/admin/categories/category-form.tsx - работает?"
+      ],
+      "цель": "Найти ОТЛИЧИЯ между working и broken формами"
+    },
+    "step_6_playwright_debugging": {
+      "задача": "Добавить более детальную диагностику в Playwright тест",
+      "добавить_в_тест": [
+        "await page.pause() перед submit для ручной проверки",
+        "await page.screenshot({ path: 'before-submit.png', fullPage: true })",
+        "const isEnabled = await submitButton.isEnabled() - проверить что кнопка enabled",
+        "page.on('console', msg => console.log('BROWSER LOG:', msg.text())) - перехват console.log"
+      ]
+    }
+  },
+
+  "КЛЮЧЕВЫЕ_ВОПРОСЫ_ДЛЯ_РАССЛЕДОВАНИЯ": {
+    "1": "Вызывается ли onSubmit handler вообще? (добавить console.log в первую строку)",
+    "2": "Какие errors в form.formState.errors перед submit? (может валидация проваливается)",
+    "3": "Все ли spec fields регистрируются в React Hook Form? (проверить getValues())",
+    "4": "Отправляется ли POST request на /api/admin/pcs? (Network tab / waitForResponse)",
+    "5": "Какой response возвращает API? (200? 400? 500?)",
+    "6": "Почему тест НЕ видит toast с ошибкой если валидация проваливается?",
+    "7": "Есть ли разница между create и edit формами? (edit работает, create не работает?)",
+    "8": "Правильно ли FormField регистрирует nested paths типа 'spec.cpu'?"
+  },
+
+  "ЧТО_НЕ_ДЕЛАТЬ": {
+    "запрещено_1": "НЕ переписывать всю форму с нуля - это сломает остальные 17 работающих тестов!",
+    "запрещено_2": "НЕ менять структуру БД или Prisma схемы без крайней необходимости",
+    "запрещено_3": "НЕ удалять существующий код без понимания почему он там",
+    "запрещено_4": "НЕ добавлять новые зависимости без необходимости",
+    "запрещено_5": "НЕ трогать Telegram Bot код - он НЕ СВЯЗАН с админкой!",
+    "разрешено": "Добавлять логирование, делать минимальные изменения для fix, тестировать гипотезы"
+  },
+
+  "ИДЕАЛЬНЫЙ_РЕЗУЛЬТАТ": {
+    "цель": "18/18 E2E тестов проходят (100%)",
+    "критерии_успеха": [
+      "Тест 'should fill and submit PC build form' проходит",
+      "После submit форма редиректит с /admin/pcs/new на /admin/pcs",
+      "PC Build сохраняется в БД корректно",
+      "Все остальные 17 тестов продолжают проходить (НЕ сломать их!)",
+      "Toast с успехом отображается после создания"
+    ],
+    "как_проверить": "cd /Users/serjnavigatian/Projects/tg-final/apps/miniapp && pnpm test:e2e --project=admin-chromium"
+  },
+
+  "КОНТЕКСТ_ПРЕДЫДУЩЕЙ_РАБОТЫ": {
+    "что_уже_работает": [
+      "Settings E2E тесты - 100% проходят",
+      "Promotions E2E тесты - 100% проходят",
+      "Categories E2E тесты - 100% проходят",
+      "Devices E2E тесты - 100% проходят",
+      "FPS Metrics E2E тесты - 100% проходят",
+      "PC Builds тесты кроме 'submit form' - проходят (display table, open form, edit form, filter)"
+    ],
+    "что_было_исправлено": [
+      "Mock images добавлены в seed.ts с фиксированными ID",
+      "Unique slug constraint - добавлен random suffix",
+      "Availability filter в settings - исправлен selector",
+      "Settings test sibling selector - исправлен",
+      "options и coverImageId сделаны optional в Zod schema"
+    ]
+  },
+
+  "ВАЖНЫЕ_ДЕТАЛИ_ПРОЕКТА": {
+    "port": "3002 (НЕ 3000! Пользователь использует 3000 для другого проекта)",
+    "database": "PostgreSQL (seed данными через pnpm db:seed)",
+    "цветовая_схема": {
+      "primary": "#9D4EDD (electric violet neon)",
+      "background": "#1A1A1A (dark graphite)",
+      "запрет": "NO YELLOW colors!"
+    },
+    "monorepo_structure": {
+      "apps/miniapp": "Telegram Mini App с админкой",
+      "packages/ui": "Shared UI components (shadcn/ui)",
+      "services": "Backend services (если есть)"
+    }
+  },
+
+  "ИНСТРУКЦИИ_ДЛЯ_CURSOR_COMPOSER": {
+    "1_начать_с_анализа": "Прочитай ВСЕ критические файлы перед любыми изменениями",
+    "2_добавить_логирование": "Первым делом добавь comprehensive logging для диагностики",
+    "3_тестировать_гипотезы": "Проверь каждую гипотезу систематически - не пропускай шаги",
+    "4_минимальные_изменения": "Делай минимальные изменения, тестируй после каждого изменения",
+    "5_сохранять_работающий_код": "17 тестов работают - НЕ сломай их!",
+    "6_использовать_sequential_thinking": "Если доступен - используй для глубокого анализа",
+    "7_запускать_тесты_часто": "pnpm test:e2e --project=admin-chromium после каждого fix",
+    "8_документировать_находки": "Записывай что нашел и почему fix сработал/не сработал"
+  },
+
+  "СЛЕДУЮЩИЕ_ШАГИ": {
+    "immediate": [
+      "1. Прочитать pc-build-form.tsx полностью",
+      "2. Добавить console.log для диагностики",
+      "3. Запустить тест с логированием",
+      "4. Проанализировать логи - где форма проваливается?",
+      "5. Исправить найденную проблему",
+      "6. Запустить все тесты - проверить 18/18"
+    ],
+    "если_не_поможет": [
+      "Упростить Zod схему (все optional)",
+      "Проверить API route",
+      "Сравнить с working формами",
+      "Добавить Playwright pause для ручной диагностики"
+    ]
+  },
+
+  "МЕТАИНФОРМАЦИЯ": {
+    "создано": "2025-11-04",
+    "автор": "Claude Code (Sonnet 4.5)",
+    "цель": "Передать максимум контекста в Cursor Composer для финального fix",
+    "попытки_исправления": 6,
+    "время_работы_над_проблемой": "~3 часа",
+    "статус": "КРИТИЧЕСКИЙ - последняя попытка перед эскалацией"
+  }
+}

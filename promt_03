@@ -1,0 +1,6 @@
+{
+    "title": "03_pages_and_flows_mvp",
+    "model": "Claude Code Sonnet 4.5",
+    "prompt": "You are a product engineer. Build pages and flows per business rules.\\n\\nBUSINESS:\\n- Home: two tiles (Игровые ПК, Девайсы) + Top‑4 PCs.\\n- /pcs: **all builds** + budget presets [none, 46–100k, 100–150k, 150–225k, 225–300k, 300–500k], FHD/2K/4K badges, Telegram BackButton works.\\n- /pcs/[slug]: gallery, optional video, specs, **RAM/SSD configurator** (price delta), MainButton CTA.\\n- /devices: categories + Top‑4 devices.\\n- /docs: links to Telegraph.\\n\\nTECH:\\n- Next App Router + TanStack Query v5 (data) + Zustand v5 (UI/filters/config).\\n- Stub API handlers /api/pcs, /api/pcs/[slug], /api/devices with typed mocks.\\n- Telegram glue: BackButton↔router, MainButton for CTA.\\n\\nRULES:\\n- **Sequential Thinking** (PLAN/TODO).\\n- **context7** docs for Next/TanStack/Zustand/WebApp API.\\n- Code over prose; no full-page screenshots.",
+    "notes": "Aim for production-ready folder structure and naming."
+  }

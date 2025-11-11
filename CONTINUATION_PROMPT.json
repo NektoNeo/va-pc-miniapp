@@ -1,0 +1,250 @@
+{
+  "⚠️ CRITICAL_WARNING": "НЕ ПЕРЕПИСЫВАЙ ПРОЕКТ С НУЛЯ! НЕ ПЕРЕДЕЛЫВАЙ БОТА! РАБОТАЕМ НАД АДМИНКОЙ!",
+
+  "task": {
+    "title": "Fix Admin Panel E2E Tests",
+    "description": "Fix 3 critical blockers to achieve 18/18 passing E2E tests for admin panel",
+    "current_status": "8/18 tests passing (44% success rate)",
+    "target": "18/18 tests passing (100%)",
+    "last_commit": "d4df5f3 - feat(ui): Add alert-dialog and tooltip shadcn components",
+    "working_directory": "/Users/serjnavigatian/Projects/tg-final/packages/ui"
+  },
+
+  "⚡ MANDATORY_RULES": {
+    "1_sequential_thinking": {
+      "rule": "ВСЕГДА используй mcp__sequential-thinking__sequentialthinking для КАЖДОГО действия",
+      "why": "Не жалей токены, находи оптимальное решение, анализируй все варианты",
+      "when": "На КАЖДОЕ действие, анализ или решение"
+    },
+    "2_context7": {
+      "rule": "ВСЕГДА используй Context7 для актуальной документации библиотек",
+      "actions": [
+        "mcp__context7__resolve-library-id для поиска библиотеки",
+        "mcp__context7__get-library-docs для получения документации"
+      ],
+      "when": "При работе с ЛЮБОЙ библиотекой, генерации кода, настройке конфигурации"
+    },
+    "3_port_3002": {
+      "rule": "ЗАПУСКАЙ СБОРКУ ТОЛЬКО НА 3002 ПОРТУ!!!",
+      "critical": "ЗАПОМНИ КАК ОТЧЕ НАШ!",
+      "reason": "3000 порт нужен пользователю для другого проекта",
+      "status": "❌ NOT CONFIGURED - CRITICAL BLOCKER"
+    },
+    "4_color_tokens": {
+      "primary": "#9D4EDD (electric violet neon)",
+      "background": "#1A1A1A (dark graphite)",
+      "forbidden": "NO YELLOW colors in design"
+    },
+    "5_sentry_integration": {
+      "rule": "Verify Sentry issues integration",
+      "when": "After fixing bugs, check Sentry for related errors"
+    }
+  },
+
+  "🔴 CRITICAL_BLOCKERS": {
+    "blocker_1_dropdown_menu": {
+      "title": "Missing dropdown-menu component",
+      "severity": "CRITICAL - Compilation Error",
+      "file": "apps/miniapp/components/admin/promos/promos-table.tsx:14",
+      "error": "Module not found: Can't resolve '@vapc/ui/components/dropdown-menu'",
+      "solution": {
+        "step_1": "Get shadcn dropdown-menu component code",
+        "step_2": "Create packages/ui/components/dropdown-menu.tsx",
+        "step_3": "Add export to packages/ui/components/index.ts",
+        "step_4": "Add @radix-ui/react-dropdown-menu to packages/ui/package.json",
+        "step_5": "Run pnpm install in packages/ui"
+      }
+    },
+    "blocker_2_nextjs15_params": {
+      "title": "Next.js 15 params await issue",
+      "severity": "CRITICAL - Runtime Error",
+      "file": "app/admin/pcs/[id]/page.tsx:48 and :88",
+      "error": "Route used `params.id`. `params` should be awaited before using its properties",
+      "current_code": "const isNew = params.id === \"new\";",
+      "fixed_code": "const resolvedParams = await params;\nconst isNew = resolvedParams.id === \"new\";",
+      "solution": {
+        "step_1": "Find all instances of params.id access",
+        "step_2": "Add `const resolvedParams = await params;` at function start",
+        "step_3": "Replace all `params.id` with `resolvedParams.id`"
+      }
+    },
+    "blocker_3_port_3002": {
+      "title": "Port 3002 not configured",
+      "severity": "CRITICAL - User Requirement Violated",
+      "current": "Dev server running on port 3000",
+      "required": "Dev server MUST run on port 3002",
+      "user_quote": "ЗАПУСКАЙ СБОРКУ ТОЛЬКО НА 3002 ПОРТУ. 3000 ПОРТ - ОСВОБОДИТЬ, ОН МНЕ НУЖЕН ДЛЯ ДРУГОГО ПРОЕКТА, ЗАПОМНИ КАК ОТЧЕ НАШ!!!!!",
+      "solution": {
+        "option_1": "Add PORT=3002 to .env file",
+        "option_2": "Modify package.json dev script: \"dev\": \"PORT=3002 next dev --turbopack\"",
+        "option_3": "Create .env.local with PORT=3002"
+      }
+    }
+  },
+
+  "📦 PROJECT_CONTEXT": {
+    "name": "VA-PC Telegram Mini App - Admin Panel",
+    "description": "Admin panel for managing PC builds, devices, categories, promotions in Telegram mini app",
+    "monorepo_structure": {
+      "apps/miniapp": "Next.js 15 app with admin panel",
+      "packages/ui": "Shared shadcn/ui components library"
+    },
+    "tech_stack": {
+      "framework": "Next.js 15 with App Router",
+      "bundler": "Turbopack",
+      "package_manager": "pnpm with workspaces",
+      "ui_library": "shadcn/ui (Radix UI primitives)",
+      "testing": "Playwright E2E tests",
+      "auth": "NextAuth.js",
+      "database": "PostgreSQL with Prisma"
+    },
+    "pnpm_workspace": "Uses workspace:* protocol for internal dependencies"
+  },
+
+  "✅ COMPLETED_TASKS": {
+    "from_original_ui_panel_prompt": [
+      "Admin Authentication система (NextAuth.js)",
+      "PC Builds CRUD with list view, create/edit forms, validation",
+      "FPS Metrics management for PC Builds",
+      "Image upload functionality for PC Builds",
+      "Devices CRUD (Process + Component + Manufacturer)",
+      "Categories CRUD with parent-child hierarchy",
+      "Promotions CRUD with create/edit forms and preview",
+      "Settings page with Top-4 PC Builds reordering (drag-and-drop)",
+      "Shared UI Components in packages/ui: button, card, badge, label, input, textarea, separator, switch, select, dialog, sheet, tabs, accordion, form"
+    ],
+    "from_this_session_commit_d4df5f3": [
+      "Created alert-dialog.tsx with all subcomponents (AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel)",
+      "Created tooltip.tsx with all subcomponents (Tooltip, TooltipTrigger, TooltipContent, TooltipProvider)",
+      "Added exports to packages/ui/components/index.ts",
+      "Installed @radix-ui/react-alert-dialog@1.1.15",
+      "Installed @radix-ui/react-tooltip@1.2.8",
+      "Improved E2E tests from 0/18 to 8/18 passing (44% success rate)"
+    ]
+  },
+
+  "📝 TODO_LIST": {
+    "immediate_priority": [
+      {
+        "id": 1,
+        "task": "Fix blocker_1: Add dropdown-menu component",
+        "steps": [
+          "Use context7 to get Radix UI dropdown-menu documentation",
+          "Get shadcn dropdown-menu component implementation",
+          "Create packages/ui/components/dropdown-menu.tsx",
+          "Add export to packages/ui/components/index.ts: export * from \"./dropdown-menu\";",
+          "Add @radix-ui/react-dropdown-menu to packages/ui/package.json dependencies",
+          "Run: cd packages/ui && pnpm install"
+        ],
+        "expected_outcome": "promos-table.tsx compiles without errors"
+      },
+      {
+        "id": 2,
+        "task": "Fix blocker_2: Next.js 15 params await",
+        "steps": [
+          "Open app/admin/pcs/[id]/page.tsx",
+          "Find all dynamic route pages with params access",
+          "Add const resolvedParams = await params; at function start",
+          "Replace all params.id with resolvedParams.id",
+          "Verify no other files have this issue: grep -r 'params\\.' apps/miniapp/app/admin"
+        ],
+        "expected_outcome": "No runtime errors about params in Next.js 15"
+      },
+      {
+        "id": 3,
+        "task": "Fix blocker_3: Configure port 3002",
+        "steps": [
+          "Create or edit apps/miniapp/.env.local",
+          "Add: PORT=3002",
+          "Verify dev script in apps/miniapp/package.json",
+          "Kill any process on port 3000",
+          "Restart dev server and verify it runs on 3002"
+        ],
+        "expected_outcome": "Dev server runs on port 3002, port 3000 is free",
+        "critical": "USER REQUIREMENT LIKE 'ОТЧЕ НАШ'"
+      },
+      {
+        "id": 4,
+        "task": "Clear .next cache and re-run tests",
+        "steps": [
+          "cd apps/miniapp",
+          "rm -rf .next",
+          "pnpm test:e2e --project=admin-chromium"
+        ],
+        "expected_outcome": "18/18 tests passing"
+      },
+      {
+        "id": 5,
+        "task": "Verify Sentry integration",
+        "steps": [
+          "Check Sentry dashboard for any related errors",
+          "Verify error tracking is working",
+          "Document any issues found"
+        ]
+      }
+    ],
+    "verification": [
+      "Run pnpm test:e2e --project=admin-chromium",
+      "Verify all 18 tests pass",
+      "Check dev server runs on port 3002",
+      "Verify no compilation errors",
+      "Create final commit with fix message"
+    ]
+  },
+
+  "🎯 SUCCESS_CRITERIA": {
+    "tests": "18/18 E2E admin tests passing (100%)",
+    "compilation": "No TypeScript or module resolution errors",
+    "port": "Dev server running on port 3002 (NOT 3000)",
+    "sentry": "No unresolved errors in Sentry dashboard"
+  },
+
+  "📚 KEY_FILES_REFERENCE": {
+    "ui_components_package": {
+      "path": "packages/ui/package.json",
+      "exports": "packages/ui/components/index.ts",
+      "components_dir": "packages/ui/components/"
+    },
+    "admin_pages": {
+      "pcs_dynamic": "apps/miniapp/app/admin/pcs/[id]/page.tsx (HAS params await issue)",
+      "promos_table": "apps/miniapp/components/admin/promos/promos-table.tsx (NEEDS dropdown-menu)"
+    },
+    "test_file": "apps/miniapp/tests/e2e/admin.spec.ts (18 tests total)"
+  },
+
+  "🚀 QUICK_START_COMMANDS": {
+    "1_navigate_to_ui_package": "cd /Users/serjnavigatian/Projects/tg-final/packages/ui",
+    "2_add_dropdown_menu": "Use context7 + shadcn for dropdown-menu component",
+    "3_install_deps": "pnpm install",
+    "4_fix_params": "Edit app/admin/pcs/[id]/page.tsx with await params",
+    "5_configure_port": "echo 'PORT=3002' > apps/miniapp/.env.local",
+    "6_clear_cache": "cd ../apps/miniapp && rm -rf .next",
+    "7_run_tests": "pnpm test:e2e --project=admin-chromium"
+  },
+
+  "💡 IMPORTANT_NOTES": {
+    "note_1": "DO NOT rebuild the project from scratch",
+    "note_2": "DO NOT rewrite the bot",
+    "note_3": "WORK ON ADMIN PANEL ONLY - fixing E2E tests",
+    "note_4": "USE sequential thinking for EVERY decision",
+    "note_5": "USE context7 for library documentation",
+    "note_6": "Port 3002 is MANDATORY (user's critical requirement)",
+    "note_7": "Current work is continuation of completed UI panel tasks"
+  },
+
+  "📊 CURRENT_TEST_STATUS": {
+    "total_tests": 18,
+    "passing": 8,
+    "failing": 10,
+    "success_rate": "44%",
+    "target_rate": "100%",
+    "test_suites": [
+      "Admin authentication",
+      "PC Builds CRUD",
+      "Devices CRUD",
+      "Categories CRUD",
+      "Promotions CRUD",
+      "Settings page"
+    ]
+  }
+}
