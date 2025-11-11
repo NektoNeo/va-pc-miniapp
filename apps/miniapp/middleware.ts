@@ -44,6 +44,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // BYPASS AUTH IN DEVELOPMENT MODE
+  if (process.env.NODE_ENV === "development") {
+    console.log("[Middleware] DEV MODE: Bypassing auth for", pathname);
+    return NextResponse.next();
+  }
+
   // Allow public admin routes
   if (PUBLIC_ADMIN_ROUTES.some((route) => pathname.startsWith(route))) {
     return NextResponse.next();
