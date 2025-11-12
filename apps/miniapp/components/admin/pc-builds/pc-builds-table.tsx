@@ -10,9 +10,9 @@ import { toast } from "sonner";
 import type { Prisma } from "@prisma/client";
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
-import { ModernBadge } from "@repo/ui/modern-badge";
-import { ModernButton } from "@repo/ui/modern-button";
-import { ModernCard, ModernCardHeader, ModernCardTitle, ModernCardContent, ModernCardFooter } from "@repo/ui/modern-card";
+import { ModernBadge } from "@vapc/ui/components/modern-badge";
+import { ModernButton } from "@vapc/ui/components/modern-button";
+import { ModernCard, ModernCardHeader, ModernCardTitle, ModernCardContent, ModernCardFooter } from "@vapc/ui/components/modern-card";
 
 /**
  * PC Build List Item Type

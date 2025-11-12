@@ -27,9 +27,9 @@ import {
   Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { SkeletonTable } from "@repo/ui/skeleton";
-import { ModernCard, ModernCardContent } from "@repo/ui/modern-card";
-import { ModernButton } from "@repo/ui/modern-button";
+import { SkeletonTable } from "@vapc/ui/components/skeleton";
+import { ModernCard, ModernCardContent } from "@vapc/ui/components/modern-card";
+import { ModernButton } from "@vapc/ui/components/modern-button";
 
 /**
  * DataTable Component Props

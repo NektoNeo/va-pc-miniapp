@@ -70,6 +70,17 @@ export async function verifySession(
  * Get current session from cookies (Server Component)
  */
 export async function getSession(): Promise<SessionPayload | null> {
+  // DEV MODE: Return mock session to bypass authentication
+  if (process.env.NODE_ENV === "development") {
+    return {
+      userId: "dev-user-id",
+      email: "dev@va-pc.ru",
+      role: "SUPER_ADMIN",
+      iat: Math.floor(Date.now() / 1000),
+      exp: Math.floor(Date.now() / 1000) + 86400, // 24 hours
+    };
+  }
+
   const cookieStore = await cookies();
   const sessionCookie = cookieStore.get(SESSION_COOKIE);
 
