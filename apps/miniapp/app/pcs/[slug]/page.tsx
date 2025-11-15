@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Gallery } from "@/components/pc-detail/gallery";
 import { SpecsList } from "@/components/pc-detail/specs-list";
 import { Configurator } from "@/components/pc-detail/configurator";
+import { FPSMetricsDisplay } from "@/components/pc-detail/fps-metrics-display";
 import { useTelegramBackButton, useTelegramMainButton } from "@/lib/telegram/navigation";
 import { useConfigStore } from "@/stores/config";
 import { Badge, Card, CardContent } from "@vapc/ui/components";
@@ -28,6 +29,20 @@ export default function PCDetailPage({
       }
       return res.json();
     },
+  });
+
+  // Fetch FPS metrics
+  const { data: fpsData } = useQuery({
+    queryKey: ["fps", slug],
+    queryFn: async () => {
+      const res = await fetch(`/api/pcs/${slug}/fps`);
+      if (!res.ok) {
+        // If FPS data doesn't exist, just return null (not an error)
+        return null;
+      }
+      return res.json();
+    },
+    enabled: !!data, // Only fetch FPS after PC data is loaded
   });
 
   useTelegramBackButton();
@@ -92,6 +107,14 @@ export default function PCDetailPage({
 
         {/* Gallery */}
         <Gallery images={pc.gallery} videoUrl={pc.videoUrl} />
+
+        {/* FPS Metrics - показываем только если есть данные */}
+        {fpsData?.groupedByResolution && (
+          <FPSMetricsDisplay
+            slug={slug}
+            groupedByResolution={fpsData.groupedByResolution}
+          />
+        )}
 
         {/* Configurator */}
         <Configurator options={pc.configOptions} basePrice={pc.price} />

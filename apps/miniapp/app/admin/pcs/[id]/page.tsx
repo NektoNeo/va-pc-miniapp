@@ -1,6 +1,8 @@
 import { notFound, redirect } from "next/navigation";
+import { Suspense } from "react";
 import { db } from "@/lib/db";
 import { PCBuildForm } from "@/components/admin/pc-builds/pc-build-form";
+import { FpsMetricsManager } from "@/components/admin/fps/fps-metrics-manager";
 import type { Prisma } from "@prisma/client";
 
 /**
@@ -78,6 +80,13 @@ export default async function PCBuildFormPage({ params }: PageProps) {
 
       {/* Form Component */}
       <PCBuildForm initialData={pcBuild} isEdit={!isNew} />
+
+      {/* FPS Metrics Manager - только для существующих сборок */}
+      {!isNew && pcBuild && (
+        <div className="mt-6">
+          <FpsMetricsManager pcId={pcBuild.id} />
+        </div>
+      )}
     </div>
   );
 }

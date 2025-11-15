@@ -40,29 +40,23 @@ export const fpsMetricFormSchema = z.object({
 export type FpsMetricFormData = z.infer<typeof fpsMetricFormSchema>;
 
 /**
- * Популярные игры для autocomplete suggestions
+ * Фиксированный список игр для FPS метрик
+ * Ровно 13 игр - список не расширяется
  */
-export const POPULAR_GAMES = [
+export const FIXED_GAMES = [
+  "Forza Horizon 5",
   "Cyberpunk 2077",
-  "CS2",
-  "Valorant",
   "GTA V",
+  "CS 2",
+  "PUBG",
   "Fortnite",
-  "Apex Legends",
-  "Call of Duty: Warzone",
-  "Elden Ring",
-  "Red Dead Redemption 2",
-  "The Witcher 3",
+  "Rust",
+  "Atomic Heart",
   "Hogwarts Legacy",
-  "Spider-Man",
   "God of War",
-  "Starfield",
-  "Baldur's Gate 3",
-  "League of Legends",
+  "RDR 2",
+  "Apex Legends",
   "Dota 2",
-  "Overwatch 2",
-  "Rainbow Six Siege",
-  "Destiny 2",
 ] as const;
 
 /**

@@ -46,7 +46,7 @@ import {
 import {
   fpsMetricFormSchema,
   getResolutionShortLabel,
-  POPULAR_GAMES,
+  FIXED_GAMES,
   type FpsMetricFormData,
 } from "@/lib/validations/fps-metrics";
 
@@ -278,18 +278,20 @@ export function FpsMetricsManager({ pcId }: FpsMetricsManagerProps) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Игра *</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Cyberpunk 2077"
-                        list="popular-games"
-                        {...field}
-                      />
-                    </FormControl>
-                    <datalist id="popular-games">
-                      {POPULAR_GAMES.map((game) => (
-                        <option key={game} value={game} />
-                      ))}
-                    </datalist>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Выберите игру" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {FIXED_GAMES.map((game) => (
+                          <SelectItem key={game} value={game}>
+                            {game}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
