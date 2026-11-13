@@ -3,6 +3,13 @@ import { PrismaClient, Resolution, Availability, ImageFormat, CategoryKind, Enti
 const prisma = new PrismaClient()
 
 async function main() {
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('Demo data seeding is disabled in production.')
+  }
+  const password = process.env.ADMIN_BOOTSTRAP_PASSWORD
+  if (password && (password.length < 16 || Buffer.byteLength(password) > 72)) {
+    throw new Error('ADMIN_BOOTSTRAP_PASSWORD must be at least 16 characters and at most 72 bytes.')
+  }
   console.log('🌱 Starting database seed...')
 
   // Clean existing data (in reverse order of dependencies)
@@ -17,27 +24,22 @@ async function main() {
   await prisma.videoAsset.deleteMany()
   await prisma.imageAsset.deleteMany()
   await prisma.settings.deleteMany()
-  await prisma.adminUser.deleteMany()
 
   // ============================================================================
   // ADMIN USERS (for admin panel access)
   // ============================================================================
-  console.log('👤 Creating admin users...')
-
-  const bcrypt = await import('bcryptjs')
-  const testAdminPassword = await bcrypt.hash('TestPassword123!', 10)
-
-  await prisma.adminUser.create({
-    data: {
-      email: 'test@va-pc.ru',
-      passwordHash: testAdminPassword,
-      name: 'Test Admin',
-      role: 'SUPER_ADMIN',
-      active: true,
-    },
-  })
-
-  console.log('✅ Created test admin user: test@va-pc.ru / TestPassword123!')
+  if (password) {
+    const bcrypt = await import('bcryptjs')
+    const email = process.env.ADMIN_BOOTSTRAP_EMAIL || 'test@va-pc.ru'
+    await prisma.adminUser.upsert({
+      where: { email },
+      update: {},
+      create: {
+        email, passwordHash: await bcrypt.hash(password, 12),
+        name: 'Administrator', role: 'SUPER_ADMIN', active: true,
+      },
+    })
+  }
 
   // ============================================================================
   // IMAGE ASSETS
