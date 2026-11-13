@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import * as Sentry from "@sentry/nextjs";
 
@@ -153,12 +154,12 @@ export default function TestSentryPage() {
         </div>
 
         <div className="mt-8">
-          <a
+          <Link
             href="/"
             className="text-blue-500 hover:text-blue-700 underline"
           >
             ← Вернуться на главную
-          </a>
+          </Link>
         </div>
       </div>
     </main>

@@ -566,7 +566,7 @@ export function PCBuildForm({ initialData, isEdit }: PCBuildFormProps) {
                         Топовая сборка
                       </FormLabel>
                       <FormDescription className="text-white/60">
-                        Отображать в разделе "Топ-4"
+                        Отображать в разделе &quot;Топ-4&quot;
                       </FormDescription>
                     </div>
                     <FormControl>
