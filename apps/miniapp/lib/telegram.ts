@@ -55,5 +55,5 @@ export function SDKProvider({
     }
   }, [debug]);
 
-  return <>{children}</>;
+  return children;
 }

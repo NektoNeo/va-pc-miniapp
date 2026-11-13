@@ -11,18 +11,19 @@ import { test as setup, expect } from "@playwright/test";
  *
  * IMPORTANT: Run `pnpm db:seed` before tests to create the admin user:
  * - Email: test@va-pc.ru
- * - Password: TestPassword123!
+ * - Set ADMIN_BOOTSTRAP_PASSWORD for the test account.
  */
 
 const adminAuthFile = ".auth/admin.json";
 
 // Test admin credentials (must match credentials in prisma/seed.ts)
 const TEST_ADMIN = {
-  email: "test@va-pc.ru",
-  password: "TestPassword123!",
+  email: process.env.ADMIN_BOOTSTRAP_EMAIL || "test@va-pc.ru",
+  password: process.env.ADMIN_BOOTSTRAP_PASSWORD,
 };
 
 setup("authenticate as admin", async ({ request }) => {
+  if (!TEST_ADMIN.password) throw new Error("Set ADMIN_BOOTSTRAP_PASSWORD for the test account");
   console.log("🔑 Authenticating admin user via API...");
   console.log(
     "⚠️  Make sure you ran 'pnpm db:seed' to create the test admin user!"

@@ -1,48 +1,23 @@
 import pg from 'pg';
 import bcrypt from 'bcryptjs';
 
-const { Client } = pg;
-
-// Database connection from .env.local
-const DATABASE_URL = 'postgresql://postgres:postgres@localhost:5432/vapc_dev';
-
-async function createAdminUser() {
-  const client = new Client({ connectionString: DATABASE_URL });
-
-  try {
-    await client.connect();
-    console.log('✅ Connected to database');
-
-    // Hash password
-    const password = 'TestPassword123!';
-    const passwordHash = await bcrypt.hash(password, 10);
-    console.log('✅ Password hashed');
-
-    // Delete existing admin user if exists
-    await client.query('DELETE FROM "AdminUser" WHERE email = $1', ['test@va-pc.ru']);
-    console.log('🗑️  Deleted existing admin user (if any)');
-
-    // Create new admin user
-    const result = await client.query(
-      `INSERT INTO "AdminUser" (id, email, "passwordHash", name, role, active, "createdAt", "updatedAt")
-       VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, NOW(), NOW())
-       RETURNING id, email, name, role`,
-      ['test@va-pc.ru', passwordHash, 'Test Admin', 'SUPER_ADMIN', true]
-    );
-
-    console.log('✅ Admin user created:');
-    console.log(result.rows[0]);
-    console.log('\n📧 Email: test@va-pc.ru');
-    console.log('🔑 Password: TestPassword123!');
-
-  } catch (error) {
-    console.error('❌ Error:', error.message);
-    throw error;
-  } finally {
-    await client.end();
-  }
+const { DATABASE_URL, ADMIN_BOOTSTRAP_EMAIL, ADMIN_BOOTSTRAP_PASSWORD } = process.env;
+if (!DATABASE_URL || !ADMIN_BOOTSTRAP_EMAIL || !ADMIN_BOOTSTRAP_PASSWORD ||
+    ADMIN_BOOTSTRAP_PASSWORD.length < 16 || Buffer.byteLength(ADMIN_BOOTSTRAP_PASSWORD) > 72) {
+  throw new Error('Set DATABASE_URL, ADMIN_BOOTSTRAP_EMAIL and a password of at least 16 characters (maximum 72 bytes).');
 }
 
-createAdminUser()
-  .then(() => process.exit(0))
-  .catch(() => process.exit(1));
+const client = new pg.Client({ connectionString: DATABASE_URL });
+try {
+  const passwordHash = await bcrypt.hash(ADMIN_BOOTSTRAP_PASSWORD, 12);
+  await client.connect();
+  const result = await client.query(
+    `INSERT INTO "AdminUser" (id, email, "passwordHash", name, role, active, "createdAt", "updatedAt")
+     VALUES (gen_random_uuid(), $1, $2, 'Administrator', 'SUPER_ADMIN', true, NOW(), NOW())
+     ON CONFLICT (email) DO NOTHING`,
+    [ADMIN_BOOTSTRAP_EMAIL, passwordHash],
+  );
+  console.log(result.rowCount ? 'Administrator created.' : 'Account already exists.');
+} finally {
+  await client.end();
+}

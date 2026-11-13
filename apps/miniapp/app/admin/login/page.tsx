@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@vapc/ui/components/button";
@@ -114,25 +115,16 @@ export default function AdminLoginPage() {
             )}
           </Button>
 
-          {/* Dev hint */}
-          <div className="mt-4 rounded-lg border border-[#9D4EDD]/10 bg-white/5 p-3">
-            <p className="text-xs text-white/60">
-              💡 Тестовый доступ: <br />
-              <span className="font-mono text-[#9D4EDD]">test@va-pc.ru</span>
-              <br />
-              <span className="font-mono text-[#9D4EDD]">TestPassword123!</span>
-            </p>
-          </div>
         </form>
 
         {/* Back to site link */}
         <div className="text-center">
-          <a
+          <Link
             href="/"
             className="text-sm text-[#9D4EDD] hover:text-[#9D4EDD]/80"
           >
             ← Вернуться на сайт
-          </a>
+          </Link>
         </div>
       </div>
     </div>

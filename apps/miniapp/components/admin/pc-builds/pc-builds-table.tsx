@@ -120,7 +120,7 @@ function DeleteConfirmDialog({
         <ModernCardContent>
           <p className="text-sm text-muted-foreground">
             Вы уверены, что хотите удалить сборку{" "}
-            <span className="font-medium text-white">"{buildTitle}"</span>?
+            <span className="font-medium text-white">&quot;{buildTitle}&quot;</span>?
             <br />
             Это действие нельзя будет отменить.
           </p>

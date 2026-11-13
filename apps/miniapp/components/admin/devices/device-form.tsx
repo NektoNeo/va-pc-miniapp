@@ -369,7 +369,7 @@ export function DeviceForm({ device, categories }: DeviceFormProps) {
                     </div>
                   </FormControl>
                   <FormDescription>
-                    Badges отображаются на карточке девайса. Например: "New", "Sale", "Popular"
+                    Badges отображаются на карточке девайса. Например: &quot;New&quot;, &quot;Sale&quot;, &quot;Popular&quot;
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
